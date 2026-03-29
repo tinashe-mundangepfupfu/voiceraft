@@ -1,0 +1,2 @@
+[console_scripts]
+voiceraft-sidecar = voiceraft_sidecar.main:main

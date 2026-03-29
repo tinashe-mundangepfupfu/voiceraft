@@ -1,0 +1,24 @@
+[project]
+name = "voiceraft"
+version = "0.1.0"
+description = "VoiceRaft local meeting notes sidecar and macOS app support code"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi>=0.115.0",
+    "faster-whisper>=1.1.0",
+    "langchain>=0.3.25",
+    "langchain-openai>=0.3.17",
+    "langgraph>=0.2.60",
+    "pydantic>=2.9.0",
+    "uvicorn>=0.34.0",
+]
+
+[project.scripts]
+voiceraft-sidecar = "voiceraft_sidecar.main:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["sidecar"]

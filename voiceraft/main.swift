@@ -1,11 +1,11 @@
-//
-//  main.swift
-//  voiceraft
-//
-//  Created by Tinashe Mundangepfupfu on 29.03.26.
-//
+import AppKit
 
-import Foundation
+let application = NSApplication.shared
+application.setActivationPolicy(.accessory)
 
-print("Hello, World!")
+let delegate = MainActor.assumeIsolated { VoiceRaftAppDelegate() }
+MainActor.assumeIsolated {
+    application.delegate = delegate
+}
 
+application.run()

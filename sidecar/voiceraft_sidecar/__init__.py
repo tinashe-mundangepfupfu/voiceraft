@@ -1,0 +1,1 @@
+"""VoiceRaft sidecar package."""
