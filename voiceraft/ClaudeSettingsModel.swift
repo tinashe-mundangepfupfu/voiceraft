@@ -79,6 +79,11 @@ final class ClaudeSettingsModel: ObservableObject {
             hasSavedAPIKey = false
             apiKeyStatusError = wrappedError
             throw wrappedError
+        } catch {
+            let wrappedError = wrapKeychainError(error)
+            hasSavedAPIKey = false
+            apiKeyStatusError = wrappedError
+            throw wrappedError
         }
     }
 
