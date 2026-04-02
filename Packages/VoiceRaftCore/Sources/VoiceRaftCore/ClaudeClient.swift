@@ -150,7 +150,12 @@ public struct ClaudeClient: MeetingNotesModeling, Sendable {
             throw VoiceRaftCoreError.anthropicRequestFailed(statusCode: response.statusCode, body: body)
         }
 
-        let envelope = try JSONDecoder().decode(ClaudeMessagesResponse.self, from: data)
+        let envelope: ClaudeMessagesResponse
+        do {
+            envelope = try JSONDecoder().decode(ClaudeMessagesResponse.self, from: data)
+        } catch {
+            throw VoiceRaftCoreError.invalidAnthropicResponse("Could not decode Anthropic response envelope.")
+        }
         guard
             let content = envelope.content.first(where: { $0.type == "text" })?.text,
             let json = extractJSONObject(from: content),

@@ -167,4 +167,40 @@ final class ClaudeClientTests: XCTestCase {
             )
         }
     }
+
+    func testDraftMapsMalformedEnvelopeToTypedError() async {
+        let transport = StubHTTPTransport { _ in
+            (
+                Data(
+                    """
+                    {
+                      "content": "not-an-array"
+                    }
+                    """.utf8
+                ),
+                HTTPURLResponse(
+                    url: URL(string: "https://api.anthropic.com/v1/messages")!,
+                    statusCode: 200,
+                    httpVersion: nil,
+                    headerFields: nil
+                )!
+            )
+        }
+        let client = ClaudeClient(
+            configuration: Fixtures.claudeConfiguration(),
+            transport: transport.send
+        )
+
+        await XCTAssertThrowsErrorAsync(
+            try await client.draft(
+                transcript: "Transcript",
+                request: Fixtures.request()
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? VoiceRaftCoreError,
+                .invalidAnthropicResponse("Could not decode Anthropic response envelope.")
+            )
+        }
+    }
 }
