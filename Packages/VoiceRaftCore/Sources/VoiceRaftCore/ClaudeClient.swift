@@ -283,16 +283,13 @@ private struct ClaudeOutputConfig: Encodable {
 
 private struct ClaudeOutputFormat: Encodable, Sendable {
     let type = "json_schema"
-    let name: String
     let schema: ClaudeJSONSchema
 
     static let meetingNote = ClaudeOutputFormat(
-        name: "meeting_note",
         schema: .meetingNote
     )
 
     static let judgeDecision = ClaudeOutputFormat(
-        name: "judge_decision",
         schema: .judgeDecision
     )
 }

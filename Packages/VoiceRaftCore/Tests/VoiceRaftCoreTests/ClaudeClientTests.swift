@@ -54,7 +54,10 @@ final class ClaudeClientTests: XCTestCase {
 
         let outputConfig = try XCTUnwrap(json["output_config"] as? [String: Any])
         let format = try XCTUnwrap(outputConfig["format"] as? [String: Any])
+        XCTAssertEqual(Set(format.keys), ["type", "schema"])
         XCTAssertEqual(format["type"] as? String, "json_schema")
+        XCTAssertNotNil(format["schema"])
+        XCTAssertNil(format["name"])
 
         XCTAssertEqual(draft.sections.summary, "The team aligned on launch readiness.")
     }
@@ -111,7 +114,10 @@ final class ClaudeClientTests: XCTestCase {
 
         let outputConfig = try XCTUnwrap(json["output_config"] as? [String: Any])
         let format = try XCTUnwrap(outputConfig["format"] as? [String: Any])
+        XCTAssertEqual(Set(format.keys), ["type", "schema"])
         XCTAssertEqual(format["type"] as? String, "json_schema")
+        XCTAssertNotNil(format["schema"])
+        XCTAssertNil(format["name"])
 
         XCTAssertTrue(decision.approved)
     }
