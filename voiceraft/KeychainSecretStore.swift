@@ -1,6 +1,13 @@
 import Foundation
 import Security
 
+protocol ClaudeSecretStoring {
+    func loadAnthropicAPIKey() throws -> String?
+    func saveAnthropicAPIKey(_ apiKey: String) throws
+    func deleteAnthropicAPIKey() throws
+    func hasAnthropicAPIKey() throws -> Bool
+}
+
 struct KeychainSecretStore {
     enum StoreError: LocalizedError {
         case invalidStoredSecret
@@ -106,3 +113,5 @@ struct KeychainSecretStore {
         return query
     }
 }
+
+extension KeychainSecretStore: ClaudeSecretStoring {}

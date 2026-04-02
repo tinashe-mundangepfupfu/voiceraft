@@ -7,7 +7,8 @@ final class ClaudeSettingsModel: ObservableObject {
     typealias ModelFetcher = @Sendable (String) async throws -> [String]
 
     @Published var apiKeyDraft = ""
-    @Published private(set) var hasSavedAPIKey: Bool
+    @Published private(set) var hasSavedAPIKey = false
+    @Published private(set) var apiKeyStatusError: VoiceRaftError?
     @Published private(set) var availableModels: [String] = []
     @Published private(set) var unavailableSavedModel: String?
     @Published private(set) var isLoadingModels = false
@@ -15,19 +16,24 @@ final class ClaudeSettingsModel: ObservableObject {
 
     init(
         settingsStore: SettingsStore,
-        secretStore: KeychainSecretStore = KeychainSecretStore(),
-        modelFetcher: @escaping ModelFetcher = liveClaudeModelFetcher(apiKey:)
+        secretStore: any ClaudeSecretStoring = KeychainSecretStore(),
+        modelFetcher: @escaping ModelFetcher = { apiKey in
+            try await ClaudeSettingsModel.liveClaudeModelFetcher(apiKey: apiKey)
+        }
     ) {
         self.settingsStore = settingsStore
         self.secretStore = secretStore
         self.modelFetcher = modelFetcher
-        hasSavedAPIKey = (try? secretStore.hasAnthropicAPIKey()) ?? false
+        refreshSavedKeyStatus()
         refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
     }
 
     private let settingsStore: SettingsStore
-    private let secretStore: KeychainSecretStore
+    private let secretStore: any ClaudeSecretStoring
     private let modelFetcher: ModelFetcher
+    private var nextRefreshToken = 0
+    private var latestRefreshToken: Int?
+    private var activeRefreshTokens: Set<Int> = []
 
     var displayedModels: [String] {
         guard let unavailableSavedModel else {
@@ -42,20 +48,38 @@ final class ClaudeSettingsModel: ObservableObject {
     }
 
     func refreshSavedKeyStatus() {
-        hasSavedAPIKey = (try? secretStore.hasAnthropicAPIKey()) ?? false
+        do {
+            hasSavedAPIKey = try secretStore.hasAnthropicAPIKey()
+            apiKeyStatusError = nil
+        } catch {
+            hasSavedAPIKey = false
+            apiKeyStatusError = wrapKeychainError(error)
+        }
     }
 
     func loadSavedAPIKey() throws -> String {
-        guard
-            let apiKey = try secretStore.loadAnthropicAPIKey()?.trimmingCharacters(in: .whitespacesAndNewlines),
-            !apiKey.isEmpty
-        else {
-            hasSavedAPIKey = false
-            throw VoiceRaftError.missingClaudeAPIKey
-        }
+        do {
+            guard
+                let apiKey = try secretStore.loadAnthropicAPIKey()?.trimmingCharacters(in: .whitespacesAndNewlines),
+                !apiKey.isEmpty
+            else {
+                hasSavedAPIKey = false
+                apiKeyStatusError = nil
+                throw VoiceRaftError.missingClaudeAPIKey
+            }
 
-        hasSavedAPIKey = true
-        return apiKey
+            hasSavedAPIKey = true
+            apiKeyStatusError = nil
+            return apiKey
+        } catch let error as VoiceRaftError {
+            if case .missingClaudeAPIKey = error {
+                throw error
+            }
+            let wrappedError = wrapKeychainError(error)
+            hasSavedAPIKey = false
+            apiKeyStatusError = wrappedError
+            throw wrappedError
+        }
     }
 
     func saveAPIKey() async throws {
@@ -64,31 +88,49 @@ final class ClaudeSettingsModel: ObservableObject {
             throw VoiceRaftError.missingClaudeAPIKey
         }
 
-        try secretStore.saveAnthropicAPIKey(trimmedKey)
+        do {
+            try secretStore.saveAnthropicAPIKey(trimmedKey)
+        } catch {
+            let wrappedError = wrapKeychainError(error)
+            apiKeyStatusError = wrappedError
+            throw wrappedError
+        }
+
         apiKeyDraft = ""
         hasSavedAPIKey = true
+        apiKeyStatusError = nil
         try await refreshModels()
     }
 
     func clearAPIKey() throws {
-        try secretStore.deleteAnthropicAPIKey()
+        do {
+            try secretStore.deleteAnthropicAPIKey()
+        } catch {
+            let wrappedError = wrapKeychainError(error)
+            apiKeyStatusError = wrappedError
+            throw wrappedError
+        }
+
+        invalidateRefreshes()
         apiKeyDraft = ""
         hasSavedAPIKey = false
-        availableModels = []
+        apiKeyStatusError = nil
         modelFetchError = nil
-        isLoadingModels = false
         refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
     }
 
     func refreshModels() async throws {
-        let apiKey = try loadSavedAPIKey()
-
-        isLoadingModels = true
-        modelFetchError = nil
-        defer { isLoadingModels = false }
+        let refreshToken = beginRefresh()
+        defer { endRefresh(refreshToken) }
 
         do {
+            let apiKey = try loadSavedAPIKey()
             let models = try await modelFetcher(apiKey)
+
+            guard isLatestRefresh(refreshToken) else {
+                return
+            }
+
             availableModels = models
 
             if settingsStore.settings.claudeModel.isEmpty, let firstModel = models.first {
@@ -97,11 +139,21 @@ final class ClaudeSettingsModel: ObservableObject {
 
             refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
         } catch let error as VoiceRaftError {
+            guard isLatestRefresh(refreshToken) else {
+                return
+            }
+
+            availableModels = []
             modelFetchError = error
             refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
             throw error
         } catch {
+            guard isLatestRefresh(refreshToken) else {
+                return
+            }
+
             let wrappedError = VoiceRaftError.claudeModelFetchFailed(error.localizedDescription)
+            availableModels = []
             modelFetchError = wrappedError
             refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
             throw wrappedError
@@ -139,6 +191,42 @@ final class ClaudeSettingsModel: ObservableObject {
         updatedSettings.claudeModel = model
         settingsStore.settings = updatedSettings
         refreshUnavailableSelection(using: model)
+    }
+
+    private func beginRefresh() -> Int {
+        let refreshToken = nextRefreshToken
+        nextRefreshToken += 1
+        latestRefreshToken = refreshToken
+        activeRefreshTokens.insert(refreshToken)
+        isLoadingModels = true
+        modelFetchError = nil
+        availableModels = []
+        refreshUnavailableSelection(using: settingsStore.settings.claudeModel)
+        return refreshToken
+    }
+
+    private func endRefresh(_ refreshToken: Int) {
+        activeRefreshTokens.remove(refreshToken)
+        isLoadingModels = !activeRefreshTokens.isEmpty
+    }
+
+    private func invalidateRefreshes() {
+        latestRefreshToken = nil
+        activeRefreshTokens.removeAll()
+        isLoadingModels = false
+        availableModels = []
+    }
+
+    private func isLatestRefresh(_ refreshToken: Int) -> Bool {
+        latestRefreshToken == refreshToken
+    }
+
+    private func wrapKeychainError(_ error: Error) -> VoiceRaftError {
+        if let voiceRaftError = error as? VoiceRaftError {
+            return voiceRaftError
+        }
+
+        return VoiceRaftError.claudeAPIKeyAccessFailed(error.localizedDescription)
     }
 
     private static func liveClaudeModelFetcher(apiKey: String) async throws -> [String] {
