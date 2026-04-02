@@ -11,6 +11,7 @@ enum VoiceRaftError: LocalizedError {
     case transcriptionFailed(String)
     case lmStudioRequestFailed(String)
     case missingClaudeAPIKey
+    case claudeAPIKeyAccessFailed(String)
     case claudeModelFetchFailed(String)
     case invalidClaudeModel(String)
     case missingOrInvalidVaultPath
@@ -39,6 +40,8 @@ enum VoiceRaftError: LocalizedError {
             "VoiceRaft could not generate meeting notes. \(message)"
         case .missingClaudeAPIKey:
             "Save a Claude API key in Settings before using Claude for meeting notes."
+        case let .claudeAPIKeyAccessFailed(message):
+            "VoiceRaft could not access the saved Claude API key. \(message)"
         case let .claudeModelFetchFailed(message):
             "VoiceRaft could not load Claude models. \(message)"
         case let .invalidClaudeModel(model):
