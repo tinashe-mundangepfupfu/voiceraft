@@ -104,6 +104,7 @@ struct ClaudeSettingsModelCheck {
         try await assertInitSurfacesKeychainFailures()
         try await assertClearInvalidatesInFlightRefresh()
         try await assertConcurrentRefreshesKeepLoadingStateConsistent()
+        try await assertRefreshSurfacesKeychainReadFailures()
         try await assertFailedRefreshClearsStaleModels()
     }
 
@@ -216,6 +217,48 @@ struct ClaudeSettingsModelCheck {
 
         try assert(model.availableModels.isEmpty, "failed refresh should clear stale models")
         try assert(!model.canSelectClaudeModels, "failed refresh should leave Claude model selection disabled")
+    }
+
+    private static func assertRefreshSurfacesKeychainReadFailures() async throws {
+        let store = makeSettingsStore()
+        let secretStore = FakeSecretStore(
+            hasKeyResult: .success(true),
+            loadResult: .failure(KeychainSecretStore.StoreError.invalidStoredSecret)
+        )
+
+        let model = ClaudeSettingsModel(
+            settingsStore: store,
+            secretStore: secretStore,
+            modelFetcher: { _ in
+                throw CheckFailure(message: "model fetcher should not be called when keychain read fails")
+            }
+        )
+
+        do {
+            try await model.refreshModels()
+            throw CheckFailure(message: "refresh should fail when the keychain read fails")
+        } catch let error as VoiceRaftError {
+            switch error {
+            case let .claudeAPIKeyAccessFailed(message):
+                try assert(message.contains("macOS Keychain"), "refresh should wrap keychain read failures as key access errors")
+            default:
+                throw CheckFailure(message: "refresh should surface a Claude API key access error, got \(error)")
+            }
+        }
+
+        switch model.apiKeyStatusError {
+        case let .claudeAPIKeyAccessFailed(message):
+            try assert(message.contains("macOS Keychain"), "refresh should publish the keychain read failure in apiKeyStatusError")
+        default:
+            throw CheckFailure(message: "apiKeyStatusError should capture the keychain read failure")
+        }
+
+        switch model.modelFetchError {
+        case let .claudeAPIKeyAccessFailed(message):
+            try assert(message.contains("macOS Keychain"), "refresh should not remap keychain read failures into model fetch failures")
+        default:
+            throw CheckFailure(message: "modelFetchError should surface the keychain access failure for refresh flows")
+        }
     }
 
     private static func makeSettingsStore() -> SettingsStore {
