@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">VoiceRaft</title>
+  <desc id="desc">A Swift-native macOS meeting notes banner showing local capture, polished note drafting, and Obsidian export.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08111a"/>
+      <stop offset="55%" stop-color="#102032"/>
+      <stop offset="100%" stop-color="#12261d"/>
+    </linearGradient>
+    <radialGradient id="glowBlue" cx="26%" cy="18%" r="54%">
+      <stop offset="0%" stop-color="#57b9ff" stop-opacity="0.44"/>
+      <stop offset="100%" stop-color="#57b9ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowGreen" cx="84%" cy="82%" r="40%">
+      <stop offset="0%" stop-color="#6ed39b" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#6ed39b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panelStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="titleFill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="65%" stop-color="#d9ecff"/>
+      <stop offset="100%" stop-color="#b7f0d4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#03070d" flood-opacity="0.35"/>
+    </filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#03070d" flood-opacity="0.28"/>
+    </filter>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M 44 0 L 0 0 0 44" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="640" rx="34" fill="url(#bg)"/>
+  <rect width="1280" height="640" rx="34" fill="url(#grid)"/>
+  <rect width="1280" height="640" rx="34" fill="url(#glowBlue)"/>
+  <rect width="1280" height="640" rx="34" fill="url(#glowGreen)"/>
+
+  <circle cx="994" cy="118" r="170" fill="#6cc7ff" opacity="0.06"/>
+  <circle cx="1084" cy="438" r="188" fill="#79e1af" opacity="0.06"/>
+
+  <rect x="60" y="58" width="220" height="42" rx="21" fill="#f7fbff" fill-opacity="0.10" stroke="#f7fbff" stroke-opacity="0.12"/>
+  <circle cx="88" cy="79" r="7" fill="#ff6d7c"/>
+  <text x="106" y="85" fill="#e8f4ff" fill-opacity="0.88" font-family="'SF Pro Display','Segoe UI',Arial,sans-serif" font-size="17" font-weight="600" letter-spacing="0.04em">SWIFT-NATIVE MACOS</text>
+
+  <text x="60" y="214" fill="url(#titleFill)" font-family="'SF Pro Display','Avenir Next','Segoe UI',Arial,sans-serif" font-size="88" font-weight="760" letter-spacing="-0.05em">VoiceRaft</text>
+  <text x="60" y="278" fill="#eef6ff" fill-opacity="0.90" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="30" font-weight="520">Private meeting capture into polished notes,</text>
+  <text x="60" y="320" fill="#eef6ff" fill-opacity="0.90" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="30" font-weight="520">refined with LM Studio and exported to Obsidian.</text>
+
+  <g font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="18" font-weight="600" fill="#eef6ff">
+    <rect x="60" y="372" width="154" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="91" y="400" fill="#eef6ff" fill-opacity="0.88">Local-first</text>
+
+    <rect x="228" y="372" width="152" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="258" y="400" fill="#eef6ff" fill-opacity="0.88">LM Studio</text>
+
+    <rect x="394" y="372" width="174" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="424" y="400" fill="#eef6ff" fill-opacity="0.88">Obsidian-ready</text>
+  </g>
+
+  <g opacity="0.86">
+    <text x="60" y="486" fill="#89c8ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="18" letter-spacing="0.16em">CAPTURE</text>
+    <text x="218" y="486" fill="#89c8ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="18" letter-spacing="0.16em">TRANSCRIBE</text>
+    <text x="424" y="486" fill="#89c8ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="18" letter-spacing="0.16em">REFINE</text>
+    <text x="558" y="486" fill="#89c8ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="18" letter-spacing="0.16em">EXPORT</text>
+    <path d="M 148 480 H 198 M 362 480 H 404 M 510 480 H 548" stroke="#8ad1ff" stroke-opacity="0.66" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="712" y="54" width="488" height="30" rx="15" fill="#f7fbff" fill-opacity="0.10" stroke="#f7fbff" stroke-opacity="0.14"/>
+    <circle cx="733" cy="69" r="4" fill="#ff707d"/>
+    <circle cx="747" cy="69" r="4" fill="#ffd36f"/>
+    <circle cx="761" cy="69" r="4" fill="#7ce4a6"/>
+    <text x="1114" y="74" fill="#edf7ff" fill-opacity="0.70" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="0.18em">VOICE CAPTURE ACTIVE</text>
+
+    <rect x="706" y="108" width="432" height="396" rx="28" fill="#f7fbff" fill-opacity="0.10" stroke="url(#panelStroke)" filter="url(#softShadow)"/>
+    <rect x="706" y="108" width="432" height="56" rx="28" fill="#f7fbff" fill-opacity="0.07"/>
+    <circle cx="736" cy="136" r="6" fill="#ff707d"/>
+    <circle cx="754" cy="136" r="6" fill="#ffd36f"/>
+    <circle cx="772" cy="136" r="6" fill="#7ce4a6"/>
+    <text x="812" y="143" fill="#f2f8ff" fill-opacity="0.92" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="22" font-weight="650">Meeting Note</text>
+    <text x="1035" y="143" fill="#7de0af" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="14" font-weight="700">final.md</text>
+
+    <g font-family="'SF Pro Text','Segoe UI',Arial,sans-serif">
+      <text x="738" y="202" fill="#d9ebff" font-size="16" font-weight="700" letter-spacing="0.08em">SUMMARY</text>
+      <rect x="738" y="218" width="306" height="12" rx="6" fill="#ffffff" fill-opacity="0.16"/>
+      <rect x="738" y="240" width="274" height="12" rx="6" fill="#ffffff" fill-opacity="0.11"/>
+      <rect x="738" y="262" width="326" height="12" rx="6" fill="#ffffff" fill-opacity="0.11"/>
+
+      <text x="738" y="315" fill="#d9ebff" font-size="16" font-weight="700" letter-spacing="0.08em">DECISIONS</text>
+      <rect x="738" y="331" width="22" height="22" rx="6" fill="#7de0af" fill-opacity="0.24" stroke="#7de0af" stroke-opacity="0.42"/>
+      <path d="M 744 342 l6 6 l10 -12" fill="none" stroke="#9bf0be" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="772" y="336" width="258" height="10" rx="5" fill="#ffffff" fill-opacity="0.13"/>
+      <rect x="772" y="355" width="220" height="10" rx="5" fill="#ffffff" fill-opacity="0.10"/>
+
+      <text x="738" y="405" fill="#d9ebff" font-size="16" font-weight="700" letter-spacing="0.08em">ACTION ITEMS</text>
+      <rect x="738" y="421" width="22" height="22" rx="6" fill="#88c8ff" fill-opacity="0.22" stroke="#88c8ff" stroke-opacity="0.36"/>
+      <rect x="772" y="426" width="244" height="10" rx="5" fill="#ffffff" fill-opacity="0.13"/>
+      <rect x="772" y="445" width="196" height="10" rx="5" fill="#ffffff" fill-opacity="0.10"/>
+    </g>
+
+    <g transform="translate(1048 208)">
+      <rect width="188" height="128" rx="24" fill="#0f1b29" fill-opacity="0.88" stroke="#ffffff" stroke-opacity="0.10"/>
+      <text x="24" y="34" fill="#dbecff" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="0.12em">VAULT EXPORT</text>
+      <path d="M 30 64 L 50 48 L 70 64 L 58 92 L 42 92 Z" fill="#9a7eff"/>
+      <path d="M 42 92 L 58 92 L 70 64 L 84 84 L 58 110 L 30 84 Z" fill="#7d64ff"/>
+      <text x="100" y="66" fill="#eef6ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="12">obsidian/</text>
+      <text x="100" y="84" fill="#eef6ff" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="12">Meetings/</text>
+      <text x="100" y="102" fill="#7de0af" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="12">2026-03-31.md</text>
+    </g>
+
+    <g transform="translate(672 452)">
+      <rect width="174" height="94" rx="22" fill="#102131" fill-opacity="0.94" stroke="#ffffff" stroke-opacity="0.12"/>
+      <circle cx="28" cy="30" r="8" fill="#ff6d7c"/>
+      <text x="46" y="36" fill="#f1f8ff" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="18" font-weight="700">Recording</text>
+      <text x="24" y="62" fill="#b6d6ec" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="12">speech: local</text>
+      <text x="24" y="79" fill="#b6d6ec" font-family="'SF Mono','SFMono-Regular','Menlo',monospace" font-size="12">engine: swift</text>
+    </g>
+  </g>
+</svg>
