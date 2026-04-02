@@ -45,8 +45,12 @@ final class ClaudeClientTests: XCTestCase {
 
         let body = try XCTUnwrap(request.httpBody)
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertEqual(json["model"] as? String, "claude-3-7-sonnet-20250219")
+        XCTAssertEqual(json["max_tokens"] as? Int, 4_096)
         XCTAssertNotNil(json["system"])
-        XCTAssertNotNil(json["messages"])
+        let messages = try XCTUnwrap(json["messages"] as? [[String: Any]])
+        XCTAssertEqual(messages.count, 1)
+        XCTAssertEqual(messages.first?["role"] as? String, "user")
 
         let outputConfig = try XCTUnwrap(json["output_config"] as? [String: Any])
         let format = try XCTUnwrap(outputConfig["format"] as? [String: Any])
@@ -98,8 +102,12 @@ final class ClaudeClientTests: XCTestCase {
 
         let body = try XCTUnwrap(request.httpBody)
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertEqual(json["model"] as? String, "claude-3-7-sonnet-20250219")
+        XCTAssertEqual(json["max_tokens"] as? Int, 4_096)
         XCTAssertNotNil(json["system"])
-        XCTAssertNotNil(json["messages"])
+        let messages = try XCTUnwrap(json["messages"] as? [[String: Any]])
+        XCTAssertEqual(messages.count, 1)
+        XCTAssertEqual(messages.first?["role"] as? String, "user")
 
         let outputConfig = try XCTUnwrap(json["output_config"] as? [String: Any])
         let format = try XCTUnwrap(outputConfig["format"] as? [String: Any])
