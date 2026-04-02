@@ -18,20 +18,9 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Sidecar") {
-                HStack {
-                    TextField("Project root", text: binding(\.projectRootPath))
-                    Button("Browse") {
-                        chooseFolder { path in
-                            update(\.projectRootPath, to: path)
-                        }
-                    }
-                }
+            Section("LM Studio") {
                 TextField("LM Studio base URL", text: binding(\.lmStudioBaseURL))
                 TextField("LM Studio model", text: binding(\.lmStudioModel))
-                TextField("Whisper model", text: binding(\.whisperModel))
-                TextField("Sidecar host", text: binding(\.sidecarHost))
-                TextField("Sidecar port", value: binding(\.sidecarPort), format: .number)
             }
 
             Section("Online Meeting Audio") {
@@ -48,17 +37,10 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .padding(20)
-        .frame(width: 620, height: 360)
+        .frame(width: 620, height: 320)
     }
 
     private func binding(_ keyPath: WritableKeyPath<AppSettings, String>) -> Binding<String> {
-        Binding(
-            get: { store.settings[keyPath: keyPath] },
-            set: { update(keyPath, to: $0) }
-        )
-    }
-
-    private func binding(_ keyPath: WritableKeyPath<AppSettings, Int>) -> Binding<Int> {
         Binding(
             get: { store.settings[keyPath: keyPath] },
             set: { update(keyPath, to: $0) }

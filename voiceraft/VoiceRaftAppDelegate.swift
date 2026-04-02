@@ -9,7 +9,7 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
         settingsStore: settingsStore,
         notifications: notifications
     )
-    private lazy var statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private lazy var statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private lazy var settingsWindowController = SettingsWindowController(store: settingsStore)
 
     private let statusMenu = NSMenu()
@@ -26,11 +26,12 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
             self?.refreshMenu()
         }
         refreshMenu()
+        runStartupChecks()
     }
 
     private func configureMenu() {
-        statusItem.button?.title = "VoiceRaft"
         statusItem.menu = statusMenu
+        statusItem.isVisible = true
 
         statusItemMenuTitle = NSMenuItem(title: "Idle", action: nil, keyEquivalent: "")
         roomItem = NSMenuItem(title: "Start Room Meeting", action: #selector(startRoomMeeting), keyEquivalent: "")
@@ -59,8 +60,8 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshMenu() {
-        statusItem.button?.title = coordinator.state.statusItemTitle
         statusItemMenuTitle.title = coordinator.state.detail
+        refreshStatusItemButton()
 
         let canStart: Bool
         switch coordinator.state {
@@ -77,6 +78,45 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
             return false
         }()
         openLatestItem.isEnabled = coordinator.latestNoteURL != nil
+    }
+
+    private func refreshStatusItemButton() {
+        guard let button = statusItem.button else { return }
+
+        let appearance = coordinator.state.statusItemAppearance
+        let image = VoiceRaftStatusItemIcon.makeImage(named: appearance.symbolName)
+            ?? {
+                let configuration = NSImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+                let image = NSImage(
+                    systemSymbolName: appearance.symbolName,
+                    accessibilityDescription: coordinator.state.detail
+                )?.withSymbolConfiguration(configuration)
+                image?.isTemplate = true
+                return image
+            }()
+
+        button.title = appearance.title
+        button.imagePosition = .imageOnly
+        button.image = image
+        button.contentTintColor = appearance.tintColor
+        button.toolTip = coordinator.state.detail
+    }
+
+    private func runStartupChecks() {
+        let status = VaultStartupCheck.status(for: settingsStore.settings.obsidianVaultPath)
+        notifications.post(title: status.title, body: status.message)
+
+        guard status.shouldInterruptLaunch else { return }
+
+        let alert = NSAlert()
+        alert.messageText = status.title
+        alert.informativeText = status.message
+        alert.addButton(withTitle: "Open Settings")
+        alert.addButton(withTitle: "OK")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            openSettings()
+        }
     }
 
     @objc private func startRoomMeeting() {

@@ -2,12 +2,14 @@ import Foundation
 
 enum VoiceRaftError: LocalizedError {
     case microphonePermissionDenied
+    case speechRecognitionPermissionDenied
     case inputDeviceNotFound
     case recordingNotActive
-    case invalidSidecarBaseURL
-    case sidecarExecutableMissing(String)
-    case sidecarLaunchFailed(String)
-    case sidecarRequestFailed(String)
+    case noAudioCaptured
+    case recordingFailed(String)
+    case invalidLMStudioBaseURL
+    case transcriptionFailed(String)
+    case lmStudioRequestFailed(String)
     case missingOrInvalidVaultPath
     case exportFailed(String)
     case pendingExportFailed(String)
@@ -16,18 +18,22 @@ enum VoiceRaftError: LocalizedError {
         switch self {
         case .microphonePermissionDenied:
             "VoiceRaft needs microphone access to record meetings."
+        case .speechRecognitionPermissionDenied:
+            "VoiceRaft needs speech recognition permission to transcribe recorded meetings."
         case .inputDeviceNotFound:
             "The configured online meeting input device could not be found."
         case .recordingNotActive:
             "There is no active recording to stop."
-        case .invalidSidecarBaseURL:
-            "The local sidecar URL is invalid."
-        case let .sidecarExecutableMissing(path):
-            "VoiceRaft could not find the sidecar executable at \(path)."
-        case let .sidecarLaunchFailed(message):
-            "VoiceRaft could not launch the sidecar. \(message)"
-        case let .sidecarRequestFailed(message):
-            "VoiceRaft could not process the meeting. \(message)"
+        case .noAudioCaptured:
+            "VoiceRaft didn't receive any audio before the recording stopped."
+        case let .recordingFailed(message):
+            "VoiceRaft could not finish recording the meeting. \(message)"
+        case .invalidLMStudioBaseURL:
+            "The LM Studio base URL is invalid."
+        case let .transcriptionFailed(message):
+            "VoiceRaft could not transcribe the meeting. \(message)"
+        case let .lmStudioRequestFailed(message):
+            "VoiceRaft could not generate meeting notes. \(message)"
         case .missingOrInvalidVaultPath:
             "The configured Obsidian vault path is missing or invalid."
         case let .exportFailed(message):
