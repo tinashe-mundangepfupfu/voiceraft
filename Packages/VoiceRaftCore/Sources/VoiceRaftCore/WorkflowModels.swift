@@ -173,6 +173,10 @@ public enum VoiceRaftCoreError: Error, LocalizedError, Equatable, Sendable {
     case transcriptionFailed(String)
     case invalidLMStudioResponse(String)
     case lmStudioRequestFailed(statusCode: Int, body: String)
+    case invalidAnthropicResponse(String)
+    case anthropicRequestFailed(statusCode: Int, body: String)
+    case anthropicRequestTimedOut
+    case anthropicModelDiscoveryTimedOut
 
     public var errorDescription: String? {
         switch self {
@@ -188,6 +192,14 @@ public enum VoiceRaftCoreError: Error, LocalizedError, Equatable, Sendable {
             "VoiceRaft received an invalid LM Studio response. \(message)"
         case let .lmStudioRequestFailed(statusCode, body):
             "LM Studio returned HTTP \(statusCode). \(body)"
+        case let .invalidAnthropicResponse(message):
+            "VoiceRaft received an invalid Anthropic response. \(message)"
+        case let .anthropicRequestFailed(statusCode, body):
+            "Anthropic returned HTTP \(statusCode). \(body)"
+        case .anthropicRequestTimedOut:
+            "Anthropic timed out before it returned a response."
+        case .anthropicModelDiscoveryTimedOut:
+            "Anthropic model discovery timed out before it returned a response."
         }
     }
 }

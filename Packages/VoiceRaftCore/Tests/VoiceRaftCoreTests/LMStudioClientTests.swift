@@ -244,18 +244,3 @@ private struct StubTransport: Sendable {
         try handler(request)
     }
 }
-
-private func XCTAssertThrowsErrorAsync(
-    _ expression: @autoclosure () async throws -> some Sendable,
-    _ message: @autoclosure () -> String = "",
-    _ errorHandler: (Error) -> Void = { _ in },
-    file: StaticString = #filePath,
-    line: UInt = #line
-) async {
-    do {
-        _ = try await expression()
-        XCTFail(message(), file: file, line: line)
-    } catch {
-        errorHandler(error)
-    }
-}

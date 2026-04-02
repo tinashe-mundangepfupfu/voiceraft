@@ -1,4 +1,5 @@
 import Foundation
+import XCTest
 @testable import VoiceRaftCore
 
 enum Fixtures {
@@ -74,6 +75,17 @@ enum Fixtures {
             )
         )
     }
+
+    static func claudeConfiguration(
+        model: String = "claude-3-7-sonnet-20250219",
+        apiKey: String = "test-anthropic-key"
+    ) -> ClaudeConfiguration {
+        ClaudeConfiguration(
+            baseURL: URL(string: "https://api.anthropic.com")!,
+            model: model,
+            apiKey: apiKey
+        )
+    }
 }
 
 final class StubTranscriptService: TranscriptService, @unchecked Sendable {
@@ -125,5 +137,45 @@ final class StubMeetingNotesModelClient: MeetingNotesModeling, @unchecked Sendab
             throw NSError(domain: "StubMeetingNotesModelClient", code: 1)
         }
         return values.removeFirst()
+    }
+}
+
+final class RequestRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var storage: [URLRequest] = []
+
+    var values: [URLRequest] {
+        lock.lock()
+        defer { lock.unlock() }
+        return storage
+    }
+
+    func append(_ request: URLRequest) {
+        lock.lock()
+        storage.append(request)
+        lock.unlock()
+    }
+}
+
+struct StubHTTPTransport: Sendable {
+    let handler: @Sendable (URLRequest) throws -> (Data, HTTPURLResponse)
+
+    func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+        try handler(request)
+    }
+}
+
+func XCTAssertThrowsErrorAsync(
+    _ expression: @autoclosure () async throws -> some Sendable,
+    _ message: @autoclosure () -> String = "",
+    _ errorHandler: (Error) -> Void = { _ in },
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    do {
+        _ = try await expression()
+        XCTFail(message(), file: file, line: line)
+    } catch {
+        errorHandler(error)
     }
 }
