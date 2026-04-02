@@ -17,6 +17,10 @@ struct ClaudeSettingsUICheck {
         try assert(settingsSource.contains("SecureField"), "SettingsUI is missing the Claude API key secure field")
         try assert(settingsSource.contains("Refresh Models"), "SettingsUI is missing the Claude Refresh Models action")
         try assert(settingsSource.contains("Save API Key"), "SettingsUI is missing the Claude Save API Key action")
+        try assert(settingsSource.contains("binding(\\.notesProvider)"), "SettingsUI is missing notes provider binding")
+        try assert(settingsSource.contains("binding(\\.claudeModel)"), "SettingsUI is missing Claude model binding")
+        try assert(settingsSource.contains("Picker(\"Claude model\""), "SettingsUI is missing the Claude model picker")
+        try assert(settingsSource.contains("provider-specific"), "SettingsUI is missing provider-specific settings messaging")
     }
 
     private static func assert(_ condition: @autoclosure () -> Bool, _ message: String) throws {

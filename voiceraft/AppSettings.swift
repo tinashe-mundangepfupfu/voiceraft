@@ -1,9 +1,18 @@
 import Combine
 import Foundation
 
-enum NotesProvider: String, Codable, Equatable {
+enum NotesProvider: String, Codable, Equatable, Hashable, CaseIterable {
     case lmStudio
     case claude
+
+    var displayName: String {
+        switch self {
+        case .lmStudio:
+            "LM Studio"
+        case .claude:
+            "Claude"
+        }
+    }
 }
 
 struct AppSettings: Codable, Equatable {
