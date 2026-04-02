@@ -6,18 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXResourcesBuildPhase section */
-		0392CB9E2F7989EA00BE7C17 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
+/* Begin PBXBuildFile section */
+		03D677A92F7C471700DC2665 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A02F7C471700DC2665 /* CLAUDE.md */; };
+		03D677AA2F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */; };
+		03D677AB2F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0392CBA02F7989EA00BE7C17 /* VoiceRaft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceRaft.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D677A02F7C471700DC2665 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "2026-03-31-swift-native-meeting-workflow.md"; sourceTree = "<group>"; };
+		03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "2026-03-29-native-langgraph-swift-design.md"; sourceTree = "<group>"; };
+		03D677A72F7C471700DC2665 /* VoiceRaftCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VoiceRaftCore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -42,6 +42,9 @@
 		0392CB972F7989EA00BE7C17 = {
 			isa = PBXGroup;
 			children = (
+				03D677A02F7C471700DC2665 /* CLAUDE.md */,
+				03D677A62F7C471700DC2665 /* docs */,
+				03D677A82F7C471700DC2665 /* Packages */,
 				0392CBA22F7989EA00BE7C17 /* voiceraft */,
 				0392CBA12F7989EA00BE7C17 /* Products */,
 			);
@@ -53,6 +56,47 @@
 				0392CBA02F7989EA00BE7C17 /* VoiceRaft.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		03D677A22F7C471700DC2665 /* plans */ = {
+			isa = PBXGroup;
+			children = (
+				03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */,
+			);
+			path = plans;
+			sourceTree = "<group>";
+		};
+		03D677A42F7C471700DC2665 /* specs */ = {
+			isa = PBXGroup;
+			children = (
+				03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */,
+			);
+			path = specs;
+			sourceTree = "<group>";
+		};
+		03D677A52F7C471700DC2665 /* superpowers */ = {
+			isa = PBXGroup;
+			children = (
+				03D677A22F7C471700DC2665 /* plans */,
+				03D677A42F7C471700DC2665 /* specs */,
+			);
+			path = superpowers;
+			sourceTree = "<group>";
+		};
+		03D677A62F7C471700DC2665 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				03D677A52F7C471700DC2665 /* superpowers */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+		03D677A82F7C471700DC2665 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				03D677A72F7C471700DC2665 /* VoiceRaftCore */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,6 +157,19 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0392CB9E2F7989EA00BE7C17 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D677A92F7C471700DC2665 /* CLAUDE.md in Resources */,
+				03D677AA2F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md in Resources */,
+				03D677AB2F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0392CB9C2F7989EA00BE7C17 /* Sources */ = {
@@ -251,6 +308,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceRaft records meeting audio to generate professional meeting notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceRaft uses speech recognition to transcribe recorded meetings.";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.voiceraft.app;
 				PRODUCT_NAME = VoiceRaft;
@@ -268,6 +326,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceRaft records meeting audio to generate professional meeting notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceRaft uses speech recognition to transcribe recorded meetings.";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.voiceraft.app;
 				PRODUCT_NAME = VoiceRaft;

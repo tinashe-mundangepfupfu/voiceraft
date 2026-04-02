@@ -3,25 +3,17 @@ import Foundation
 
 struct AppSettings: Codable, Equatable {
     var obsidianVaultPath: String
-    var projectRootPath: String
     var lmStudioBaseURL: String
     var lmStudioModel: String
-    var whisperModel: String
-    var sidecarHost: String
-    var sidecarPort: Int
     var onlineInputDeviceID: String
 
     static let storageKey = "VoiceRaft.AppSettings"
 
     static func `default`() -> AppSettings {
         AppSettings(
-            obsidianVaultPath: "",
-            projectRootPath: FileManager.default.currentDirectoryPath,
+            obsidianVaultPath: "/Users/tmundangepfupfu/Documents/Obsidian Vault",
             lmStudioBaseURL: "http://127.0.0.1:1234/v1",
-            lmStudioModel: "qwen2.5-7b-instruct",
-            whisperModel: "small.en",
-            sidecarHost: "127.0.0.1",
-            sidecarPort: 8765,
+            lmStudioModel: "qwen3-8b-deepseek-v3.2-speciale-distill",
             onlineInputDeviceID: ""
         )
     }

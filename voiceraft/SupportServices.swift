@@ -11,7 +11,7 @@ struct AudioInputDeviceOption: Identifiable, Hashable {
 enum AudioInputDeviceCatalog {
     static func availableDevices() -> [AudioInputDeviceOption] {
         AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.microphone, .external],
+            deviceTypes: AudioInputDiscoveryPolicy.deviceTypes,
             mediaType: .audio,
             position: .unspecified
         ).devices
