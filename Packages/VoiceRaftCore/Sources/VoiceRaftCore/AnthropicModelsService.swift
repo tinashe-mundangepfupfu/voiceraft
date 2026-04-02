@@ -50,7 +50,12 @@ public struct AnthropicModelsService: Sendable {
                 throw VoiceRaftCoreError.anthropicRequestFailed(statusCode: response.statusCode, body: body)
             }
 
-            let page = try JSONDecoder().decode(AnthropicModelsPage.self, from: data)
+            let page: AnthropicModelsPage
+            do {
+                page = try JSONDecoder().decode(AnthropicModelsPage.self, from: data)
+            } catch {
+                throw VoiceRaftCoreError.invalidAnthropicResponse("Could not decode Anthropic models response.")
+            }
             collectedModelIDs.append(contentsOf: page.data.map(\.id))
 
             guard page.hasMore else {

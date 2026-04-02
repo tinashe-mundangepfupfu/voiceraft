@@ -122,4 +122,38 @@ final class AnthropicModelsServiceTests: XCTestCase {
             XCTAssertEqual(error as? VoiceRaftCoreError, .anthropicModelDiscoveryTimedOut)
         }
     }
+
+    func testListModelsMapsMalformedEnvelopeToTypedError() async {
+        let transport = StubHTTPTransport { request in
+            (
+                Data(
+                    """
+                    {
+                      "data": "not-an-array",
+                      "has_more": false
+                    }
+                    """.utf8
+                ),
+                HTTPURLResponse(
+                    url: request.url!,
+                    statusCode: 200,
+                    httpVersion: nil,
+                    headerFields: nil
+                )!
+            )
+        }
+        let service = AnthropicModelsService(
+            apiKey: "test-anthropic-key",
+            transport: transport.send
+        )
+
+        await XCTAssertThrowsErrorAsync(
+            try await service.listModels()
+        ) { error in
+            XCTAssertEqual(
+                error as? VoiceRaftCoreError,
+                .invalidAnthropicResponse("Could not decode Anthropic models response.")
+            )
+        }
+    }
 }
