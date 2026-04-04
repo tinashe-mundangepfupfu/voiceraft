@@ -52,6 +52,12 @@ Stored values:
 
 The Claude API key will not be stored in `AppSettings`.
 
+Backward compatibility requirement:
+
+- existing saved `AppSettings` records must continue decoding without data loss
+- add a custom decode path for new settings fields so older saved payloads default `notesProvider` to `lmStudio` and `claudeModel` to an empty string
+- preserve existing LM Studio values in place rather than replacing the whole settings object with `.default()`
+
 ### Secret Storage
 
 Introduce a `KeychainSecretStore` abstraction for provider secrets.
@@ -67,18 +73,19 @@ The initial implementation will store a single secret scoped to VoiceRaft’s bu
 
 ### Provider Clients
 
-Introduce a small provider boundary for note generation. The app should no longer directly assume LM Studio.
+Reuse the existing `VoiceRaftCore.MeetingNotesModeling` boundary for note generation rather than introducing a second provider protocol in the app target.
 
-Suggested shape:
+Ownership:
 
-- `MeetingNotesClient`
-  - `draft(transcript:request:)`
-  - `judge(transcript:draft:)`
-  - `revise(draft:feedback:request:)`
-- `LMStudioMeetingClient`
-- `ClaudeMeetingClient`
+- provider client implementations should live in `Packages/VoiceRaftCore` where possible so request building, decoding, and tests stay in one place
+- the app target should remain responsible for runtime settings resolution, keychain wiring, and selecting the active provider at runtime
 
-`NativeMeetingProcessor.makeClient(settings:)` will switch on `notesProvider` and construct the appropriate implementation.
+Concrete implementations:
+
+- `LMStudioClient` in `VoiceRaftCore` remains the LM Studio implementation of `MeetingNotesModeling`
+- add `ClaudeClient` in `VoiceRaftCore` as the Anthropic implementation of `MeetingNotesModeling`
+
+`NativeMeetingProcessor.makeClient(settings:)` will switch on `notesProvider` and construct the appropriate `MeetingNotesModeling` implementation.
 
 ### Claude Integration
 
@@ -89,14 +96,33 @@ Requirements:
 - Base endpoint: `https://api.anthropic.com`
 - Headers:
   - `x-api-key`
-  - `anthropic-version`
+  - `anthropic-version: 2023-06-01`
   - `content-type: application/json`
 - Request path:
   - `POST /v1/messages`
 
 The existing draft, judge, and revise prompts will be preserved as much as possible so the provider swap changes transport, not workflow intent.
 
-The Claude client will ask for structured JSON output and decode the result into the same local Swift types currently used by the LM Studio path.
+Request shape:
+
+- use the top-level `system` field for the system prompt
+- send a single `user` message containing the task-specific prompt payload
+- include `model`
+- include `max_tokens`
+- include `output_config.format` with `type: "json_schema"` and a schema matching the expected draft or judge payload
+
+Anthropic contract note:
+
+- use the current Claude API structured-output path documented by Anthropic for direct API calls
+- do not rely on deprecated `output_format`
+- do not require a beta header for structured outputs in this feature
+- if Anthropic rejects structured output for a selected model, surface a typed Claude-provider error telling the user to pick a supported Claude model
+
+Response handling:
+
+- read validated JSON text from the first text block in `response.content`
+- decode that JSON into the same local Swift types currently used by the LM Studio path
+- treat missing text content, invalid JSON, or schema mismatch as typed Claude response failures
 
 ### Claude Model Discovery
 
@@ -108,12 +134,24 @@ Responsibilities:
 - Decode the response from `GET /v1/models`
 - Filter or sort models for settings display
 - Surface runtime fetch errors back to the UI
+- Follow pagination until `has_more` is false so the picker includes the full available Claude model set
 
-The settings UI should fetch models on demand when:
+Display rules:
+
+- sort models alphabetically by model ID for deterministic picker order
+- show the Anthropic model ID directly in the picker
+- include every model returned by Anthropic whose model ID starts with `claude-`
+
+The settings UI should fetch models automatically when:
 
 - Claude is selected
-- a valid API key is available
-- the user taps a refresh action
+- a valid API key has just been saved
+
+The settings UI should also allow a manual refresh action after that initial fetch.
+
+Pagination rule:
+
+- follow Anthropic model-list pagination until the API indicates there are no more pages
 
 To keep the UI responsive, the model list should have explicit loading, loaded, and failed states.
 
@@ -156,11 +194,29 @@ If no API key is present:
 - disable the model picker
 - show a prompt to save the key first
 
+If a Claude API key is saved successfully:
+
+- immediately fetch the available Claude models
+- populate the picker from the fetched results
+- if no `claudeModel` is already stored and the fetch returns at least one model, auto-select the first model in the sorted list and persist it
+
+If the Claude API key is cleared:
+
+- keep the stored `claudeModel` value so the user’s previous Claude model preference is preserved for a future re-enable flow
+- disable Claude model use until a new valid Claude API key is saved
+
 If a previously saved model is no longer available:
 
 - preserve the saved value
 - mark that selection as unavailable
 - prompt the user to choose a currently available model
+- block Claude note generation until the user selects a currently available Claude model
+
+If no `claude-` models are returned:
+
+- disable the Claude model picker
+- show an inline empty-state message
+- block Claude note generation until a refresh returns at least one supported Claude model
 
 ## Processing Flow
 
@@ -205,6 +261,13 @@ Update README to document:
 - runtime model fetching from Anthropic
 - what the user needs to configure for each provider
 
+Reference docs for implementation:
+
+- Anthropic versioning: https://platform.claude.com/docs/en/api/versioning
+- Anthropic Messages API: https://docs.anthropic.com/en/api/messages
+- Anthropic structured outputs: https://platform.claude.com/docs/en/build-with-claude/structured-outputs
+- Anthropic models list: https://docs.anthropic.com/en/api/models-list
+
 ## Testing Plan
 
 ### Unit Tests
@@ -224,7 +287,8 @@ Update README to document:
 
 - provider switch changes visible settings section
 - Claude model picker is disabled without a saved API key
-- model list loads after saving a valid API key
+- model list loads automatically after saving a valid API key
+- first-time Claude setup auto-selects the first available model when no Claude model has been stored yet
 - model fetch error is surfaced inline
 
 ### Regression Coverage
@@ -238,3 +302,4 @@ Update README to document:
 - Existing LM Studio settings should remain intact
 - Claude-specific settings should be additive and optional
 - Keychain lookup must fail safely when no Claude key has been saved yet
+- Settings migration should happen through backward-compatible decoding rather than a one-time destructive reset
