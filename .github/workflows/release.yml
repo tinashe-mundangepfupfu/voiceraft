@@ -1,0 +1,57 @@
+name: Release DMG
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: Semver tag to package, for example v1.2.3
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    env:
+      VERSION_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version_tag || github.ref_name }}
+      MACOS_CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+      MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+      MACOS_SIGNING_IDENTITY: ${{ secrets.MACOS_SIGNING_IDENTITY }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+      APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+      APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate semver tag
+        run: |
+          [[ "$VERSION_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+
+      - name: Build release app and dmg
+        run: scripts/build-release-dmg.sh "$VERSION_TAG"
+
+      - name: Optional Developer ID signing and notarization
+        run: scripts/sign-and-notarize.sh "dist/VoiceRaft.app" "dist/VoiceRaft-v${VERSION_TAG#v}.dmg"
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$VERSION_TAG" >/dev/null 2>&1; then
+            echo "Release $VERSION_TAG already exists"
+          else
+            gh release create "$VERSION_TAG" --title "$VERSION_TAG" --generate-notes
+          fi
+
+      - name: Upload DMG asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$VERSION_TAG" "dist/VoiceRaft-v${VERSION_TAG#v}.dmg" --clobber
