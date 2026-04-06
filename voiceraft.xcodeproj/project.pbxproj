@@ -8,16 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		03D677A92F7C471700DC2665 /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A02F7C471700DC2665 /* CLAUDE.md */; };
-		03D677AA2F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */; };
-		03D677AB2F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md in Resources */ = {isa = PBXBuildFile; fileRef = 03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */; };
 		03E1A0012F7D100000DC2665 /* VoiceRaftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 03E1A0032F7D100000DC2665 /* VoiceRaftCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0392CBA02F7989EA00BE7C17 /* VoiceRaft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceRaft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D677A02F7C471700DC2665 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
-		03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "2026-03-31-swift-native-meeting-workflow.md"; sourceTree = "<group>"; };
-		03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "2026-03-29-native-langgraph-swift-design.md"; sourceTree = "<group>"; };
 		03D677A72F7C471700DC2665 /* VoiceRaftCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VoiceRaftCore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -45,7 +41,6 @@
 			isa = PBXGroup;
 			children = (
 				03D677A02F7C471700DC2665 /* CLAUDE.md */,
-				03D677A62F7C471700DC2665 /* docs */,
 				03D677A82F7C471700DC2665 /* Packages */,
 				0392CBA22F7989EA00BE7C17 /* voiceraft */,
 				0392CBA12F7989EA00BE7C17 /* Products */,
@@ -58,39 +53,6 @@
 				0392CBA02F7989EA00BE7C17 /* VoiceRaft.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		03D677A22F7C471700DC2665 /* plans */ = {
-			isa = PBXGroup;
-			children = (
-				03D677A12F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md */,
-			);
-			path = plans;
-			sourceTree = "<group>";
-		};
-		03D677A42F7C471700DC2665 /* specs */ = {
-			isa = PBXGroup;
-			children = (
-				03D677A32F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md */,
-			);
-			path = specs;
-			sourceTree = "<group>";
-		};
-		03D677A52F7C471700DC2665 /* superpowers */ = {
-			isa = PBXGroup;
-			children = (
-				03D677A22F7C471700DC2665 /* plans */,
-				03D677A42F7C471700DC2665 /* specs */,
-			);
-			path = superpowers;
-			sourceTree = "<group>";
-		};
-		03D677A62F7C471700DC2665 /* docs */ = {
-			isa = PBXGroup;
-			children = (
-				03D677A52F7C471700DC2665 /* superpowers */,
-			);
-			path = docs;
 			sourceTree = "<group>";
 		};
 		03D677A82F7C471700DC2665 /* Packages */ = {
@@ -170,8 +132,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				03D677A92F7C471700DC2665 /* CLAUDE.md in Resources */,
-				03D677AA2F7C471700DC2665 /* 2026-03-31-swift-native-meeting-workflow.md in Resources */,
-				03D677AB2F7C471700DC2665 /* 2026-03-29-native-langgraph-swift-design.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
