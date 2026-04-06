@@ -79,18 +79,7 @@ To publish a release:
 3. The workflow packages `VoiceRaft-v1.2.3.dmg`.
 4. The DMG is uploaded to the matching GitHub Release.
 
-By default, the release workflow produces an unsigned `.dmg` so the pipeline works immediately in open source. If you later add Apple credentials, the same workflow can also sign with `Developer ID Application` and notarize the release artifact.
-
-Optional signing/notarization secrets:
-
-- `MACOS_CERT_P12_BASE64`
-- `MACOS_CERT_PASSWORD`
-- `MACOS_SIGNING_IDENTITY`
-- `APPLE_TEAM_ID`
-- `APPLE_API_KEY_ID`
-- `APPLE_API_ISSUER_ID`
-- `APPLE_API_PRIVATE_KEY`
-
+By default, the release workflow produces an unsigned `.dmg` so the pipeline works immediately in open source. 
 ## Contributing
 
 Issues and pull requests are welcome.
