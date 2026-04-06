@@ -14,7 +14,7 @@ struct StatusItemAppearance {
     static func make(for state: StatusItemState) -> StatusItemAppearance {
         switch state {
         case .idle:
-            StatusItemAppearance(title: "", symbolName: VoiceRaftStatusItemIcon.splitVGlyphName, tintColor: .labelColor)
+            StatusItemAppearance(title: "", symbolName: VoiceRaftStatusItemIcon.splitVGlyphName, tintColor: .white)
         case .recording:
             StatusItemAppearance(title: "", symbolName: VoiceRaftStatusItemIcon.splitVGlyphName, tintColor: .systemRed)
         case .processing:

@@ -10,6 +10,11 @@ enum VoiceRaftError: LocalizedError {
     case invalidLMStudioBaseURL
     case transcriptionFailed(String)
     case lmStudioRequestFailed(String)
+    case missingClaudeAPIKey
+    case claudeAPIKeyAccessFailed(String)
+    case claudeModelFetchFailed(String)
+    case invalidClaudeModel(String)
+    case processingProviderFailure(String)
     case missingOrInvalidVaultPath
     case exportFailed(String)
     case pendingExportFailed(String)
@@ -33,6 +38,20 @@ enum VoiceRaftError: LocalizedError {
         case let .transcriptionFailed(message):
             "VoiceRaft could not transcribe the meeting. \(message)"
         case let .lmStudioRequestFailed(message):
+            "VoiceRaft could not generate meeting notes. \(message)"
+        case .missingClaudeAPIKey:
+            "Save a Claude API key in Settings before using Claude for meeting notes."
+        case let .claudeAPIKeyAccessFailed(message):
+            "VoiceRaft could not access the saved Claude API key. \(message)"
+        case let .claudeModelFetchFailed(message):
+            "VoiceRaft could not load Claude models. \(message)"
+        case let .invalidClaudeModel(model):
+            if model == "No Claude model selected" {
+                "Choose a Claude model in Settings before using Claude for meeting notes."
+            } else {
+                "The Claude model \"\(model)\" is unavailable. Choose a current Claude model in Settings."
+            }
+        case let .processingProviderFailure(message):
             "VoiceRaft could not generate meeting notes. \(message)"
         case .missingOrInvalidVaultPath:
             "The configured Obsidian vault path is missing or invalid."

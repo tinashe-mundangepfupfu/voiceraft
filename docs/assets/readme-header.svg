@@ -49,17 +49,20 @@
 
   <text x="60" y="214" fill="url(#titleFill)" font-family="'SF Pro Display','Avenir Next','Segoe UI',Arial,sans-serif" font-size="88" font-weight="760" letter-spacing="-0.05em">VoiceRaft</text>
   <text x="60" y="278" fill="#eef6ff" fill-opacity="0.90" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="30" font-weight="520">Private meeting capture into polished notes,</text>
-  <text x="60" y="320" fill="#eef6ff" fill-opacity="0.90" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="30" font-weight="520">refined with LM Studio and exported to Obsidian.</text>
+  <text x="60" y="320" fill="#eef6ff" fill-opacity="0.90" font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="30" font-weight="520">refined with LM Studio or Claude.</text>
 
   <g font-family="'SF Pro Text','Segoe UI',Arial,sans-serif" font-size="18" font-weight="600" fill="#eef6ff">
-    <rect x="60" y="372" width="154" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
-    <text x="91" y="400" fill="#eef6ff" fill-opacity="0.88">Local-first</text>
+    <rect x="60" y="372" width="140" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="87" y="400" fill="#eef6ff" fill-opacity="0.88">Local-first</text>
 
-    <rect x="228" y="372" width="152" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
-    <text x="258" y="400" fill="#eef6ff" fill-opacity="0.88">LM Studio</text>
+    <rect x="212" y="372" width="138" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="239" y="400" fill="#eef6ff" fill-opacity="0.88">LM Studio</text>
 
-    <rect x="394" y="372" width="174" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
-    <text x="424" y="400" fill="#eef6ff" fill-opacity="0.88">Obsidian-ready</text>
+    <rect x="362" y="372" width="108" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="388" y="400" fill="#eef6ff" fill-opacity="0.88">Claude</text>
+
+    <rect x="482" y="372" width="168" height="44" rx="22" fill="#f7fbff" fill-opacity="0.08" stroke="#f7fbff" stroke-opacity="0.12"/>
+    <text x="505" y="400" fill="#eef6ff" fill-opacity="0.88">Obsidian-ready</text>
   </g>
 
   <g opacity="0.86">
