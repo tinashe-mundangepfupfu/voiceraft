@@ -75,39 +75,62 @@ actor NativeMeetingProcessor {
             throw VoiceRaftError.transcriptionFailed("Speech recognition is unavailable for locale \(locale.identifier).")
         }
 
+        logger.info("speech recognizer available=\(recognizer.isAvailable) onDevice=\(recognizer.supportsOnDeviceRecognition)")
+
+        // Try on-device first, fall back to server-side if on-device produces no transcript.
+        if recognizer.supportsOnDeviceRecognition {
+            if let transcript = try? await runRecognition(recognizer: recognizer, audioURL: audioURL, onDevice: true) {
+                return transcript
+            }
+            logger.warning("on-device recognition produced no transcript, retrying with server-side")
+        }
+
+        return try await runRecognition(recognizer: recognizer, audioURL: audioURL, onDevice: false, diagnostics: diagnostics)
+    }
+
+    /// Run speech recognition and return the transcript, or throw on failure.
+    /// When `diagnostics` is nil, an empty transcript returns nil instead of throwing (used for on-device attempt before fallback).
+    private func runRecognition(
+        recognizer: SFSpeechRecognizer,
+        audioURL: URL,
+        onDevice: Bool,
+        diagnostics: RecordedAudioDiagnostics? = nil
+    ) async throws -> String {
         let request = SFSpeechURLRecognitionRequest(url: audioURL)
         request.shouldReportPartialResults = false
-        request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
+        request.requiresOnDeviceRecognition = onDevice
+
+        logger.info("starting recognition onDevice=\(onDevice)")
 
         return try await withCheckedThrowingContinuation { continuation in
             var completed = false
             recognizer.recognitionTask(with: request) { result, error in
-                if completed {
-                    return
-                }
+                if completed { return }
 
                 if let error {
                     completed = true
-                    self.logger.error("speech recognition failed error=\(error.localizedDescription, privacy: .public)")
+                    self.logger.error("speech recognition failed onDevice=\(onDevice) error=\(error.localizedDescription, privacy: .public)")
                     continuation.resume(throwing: VoiceRaftError.transcriptionFailed(error.localizedDescription))
                     return
                 }
 
-                guard let result, result.isFinal else {
-                    return
-                }
+                guard let result, result.isFinal else { return }
 
                 let normalized = self.normalizeTranscript(result.bestTranscription.formattedString)
                 completed = true
                 if normalized.isEmpty {
-                    self.logger.error("speech recognition produced empty transcript")
-                    continuation.resume(
-                        throwing: VoiceRaftError.transcriptionFailed(
-                            RecordingTranscriptionDiagnostics.failureMessage(for: diagnostics)
+                    self.logger.error("speech recognition produced empty transcript onDevice=\(onDevice)")
+                    if let diagnostics {
+                        continuation.resume(
+                            throwing: VoiceRaftError.transcriptionFailed(
+                                RecordingTranscriptionDiagnostics.failureMessage(for: diagnostics)
+                            )
                         )
-                    )
+                    } else {
+                        continuation.resume(throwing: VoiceRaftError.transcriptionFailed("Empty transcript"))
+                    }
                 } else {
-                    self.logger.info("speech recognition final transcript characters=\(normalized.count)")
+                    self.logger.info("speech recognition final onDevice=\(onDevice) characters=\(normalized.count)")
                     continuation.resume(returning: normalized)
                 }
             }

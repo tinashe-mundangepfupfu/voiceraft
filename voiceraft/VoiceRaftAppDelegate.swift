@@ -21,12 +21,34 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         notifications.requestAuthorization()
+        installEditMenu()
         configureMenu()
         coordinator.onStateChange = { [weak self] in
             self?.refreshMenu()
         }
         refreshMenu()
         runStartupChecks()
+    }
+
+    /// Install a standard Edit menu so Cmd+C/V/X/A work in text fields (menu-bar apps don't get one by default).
+    private func installEditMenu() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        appMenuItem.submenu = NSMenu()
+        mainMenu.addItem(appMenuItem)
+
+        let editMenuItem = NSMenuItem()
+        let editMenu = NSMenu(title: "Edit")
+        editMenu.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
+        editMenu.addItem(withTitle: "Redo", action: Selector(("redo:")), keyEquivalent: "Z")
+        editMenu.addItem(.separator())
+        editMenu.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        editMenu.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        editMenu.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        editMenu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        editMenuItem.submenu = editMenu
+        mainMenu.addItem(editMenuItem)
+        NSApp.mainMenu = mainMenu
     }
 
     private func configureMenu() {
@@ -84,21 +106,20 @@ final class VoiceRaftAppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
 
         let appearance = coordinator.state.statusItemAppearance
-        let image = VoiceRaftStatusItemIcon.makeImage(named: appearance.symbolName)
+        let image = VoiceRaftStatusItemIcon.makeImage(named: appearance.symbolName, color: appearance.tintColor)
             ?? {
                 let configuration = NSImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
                 let image = NSImage(
                     systemSymbolName: appearance.symbolName,
                     accessibilityDescription: coordinator.state.detail
                 )?.withSymbolConfiguration(configuration)
-                image?.isTemplate = true
                 return image
             }()
 
         button.title = appearance.title
         button.imagePosition = .imageOnly
         button.image = image
-        button.contentTintColor = appearance.tintColor
+        button.contentTintColor = nil
         button.toolTip = coordinator.state.detail
     }
 
