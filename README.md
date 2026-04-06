@@ -80,6 +80,14 @@ To publish a release:
 4. The DMG is uploaded to the matching GitHub Release.
 
 By default, the release workflow produces an unsigned `.dmg` so the pipeline works immediately in open source. 
+
+If macOS warns that VoiceRaft is damaged or refuses to open it, remove the quarantine flag and try again:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/VoiceRaft.app
+open /Applications/VoiceRaft.app
+```
+
 ## Contributing
 
 Issues and pull requests are welcome.
