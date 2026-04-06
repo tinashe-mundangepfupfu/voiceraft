@@ -3,18 +3,18 @@ import AppKit
 enum VoiceRaftStatusItemIcon {
     static let splitVGlyphName = "voiceraft.splitv"
 
-    static func makeImage(named glyphName: String, size: CGFloat = 18) -> NSImage? {
+    static func makeImage(named glyphName: String, size: CGFloat = 18, color: NSColor = .white) -> NSImage? {
         switch glyphName {
         case splitVGlyphName:
-            return makeSplitVImage(size: size)
+            return makeSplitVImage(size: size, color: color)
         default:
             return nil
         }
     }
 
-    private static func makeSplitVImage(size: CGFloat) -> NSImage {
+    private static func makeSplitVImage(size: CGFloat, color: NSColor) -> NSImage {
         let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
-            NSColor.black.setStroke()
+            color.setStroke()
 
             let leftStroke = NSBezierPath()
             leftStroke.lineWidth = rect.width * 0.18
@@ -39,7 +39,6 @@ enum VoiceRaftStatusItemIcon {
 
             return true
         }
-        image.isTemplate = true
         return image
     }
 }
