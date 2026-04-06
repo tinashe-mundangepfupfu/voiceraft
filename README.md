@@ -189,6 +189,31 @@ Key entry points:
 
 Runtime config lives in `UserDefaults` under `VoiceRaft.AppSettings` for non-secret settings. Claude API keys live in macOS Keychain. The Obsidian location comes from `obsidianVaultPath`.
 
+## Releases
+
+VoiceRaft uses semver Git tags and GitHub Releases for distributable builds.
+
+To publish a release:
+
+1. Push a semver tag like `v1.2.3`.
+2. GitHub Actions builds the app with `xcodebuild`.
+3. The workflow packages `VoiceRaft-v1.2.3.dmg`.
+4. The DMG is uploaded to the matching GitHub Release.
+
+By default, the release workflow produces an unsigned `.dmg` so the pipeline works immediately in open source. If you later add Apple credentials, the same workflow can also sign with `Developer ID Application` and notarize the release artifact.
+
+Optional signing/notarization secrets:
+
+- `MACOS_CERT_P12_BASE64`
+- `MACOS_CERT_PASSWORD`
+- `MACOS_SIGNING_IDENTITY`
+- `APPLE_TEAM_ID`
+- `APPLE_API_KEY_ID`
+- `APPLE_API_ISSUER_ID`
+- `APPLE_API_PRIVATE_KEY`
+
+The release workflow lives at [.github/workflows/release.yml](/.github/workflows/release.yml) and uses [scripts/build-release-dmg.sh](/scripts/build-release-dmg.sh) plus [scripts/sign-and-notarize.sh](/scripts/sign-and-notarize.sh).
+
 ## Outstanding Work
 
 - **LangGraph-Swift migration** — refactor the workflow engine from imperative async/await loops to a declarative `StateGraph` using [LangGraph-Swift](https://github.com/nicktmro/langchain-swift), adding formal node/edge definitions and checkpoint support
